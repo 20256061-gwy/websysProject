@@ -1,9 +1,9 @@
 @extends('layouts.admin')
-@section('title', 'Services')
+@section('title', 'Doctors')
 
 @section('content')
-    <h1>Services</h1>
-    <a href="{{ route('services.create') }}">Add New Service</a>
+    <h1>Doctors</h1>
+    <a href="{{ route('doctors.create') }}">Add New Doctor</a>
 
     @if(session('success'))
         <p style="color: green;">{{ session('success') }}</p>
@@ -18,19 +18,21 @@
             <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th>Fee</th>
+                <th>Specialization</th>
+                <th>Contact Number</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($services as $service)
+            @foreach($doctors as $doctor)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $service->name }}</td>
-                <td>{{ $service->fee }}</td>
+                <td>{{ $doctor->user->name }}</td>
+                <td>{{ $doctor->specialization }}</td>
+                <td>{{ $doctor->contact_number }}</td>
                 <td>
-                    <a href="{{ route('services.edit', $service->id) }}">Edit</a>
-                    <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline">
+                    <a href="{{ route('doctors.edit', $doctor->id) }}">Edit</a>
+                    <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST" style="display:inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
@@ -41,5 +43,5 @@
         </tbody>
     </table>
 
-    {{ $services->links() }}
+    {{ $doctors->links() }}
 @endsection

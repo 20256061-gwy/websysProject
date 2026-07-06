@@ -20,9 +20,14 @@ class ServiceController extends Controller
 
     public function store(Request $request)
     {
-        Service::create($request->all());
-        return redirect()->route('services.index')
-            ->with('success', 'Service created successfully!');
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|unique:services,name',
+        'fee' => 'required|numeric|min:0',
+    ]);
+
+    Service::create($validated);
+    return redirect()->route('services.index')
+        ->with('success', 'Service created successfully!');
     }
 
     public function edit(Service $service)
@@ -32,15 +37,25 @@ class ServiceController extends Controller
 
     public function update(Request $request, Service $service)
     {
-        $service->update($request->all());
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|unique:services,name,' . $service->id,
+        'fee' => 'required|numeric|min:0',
+    ]);
+
+    $service->update($validated);
+    return redirect()->route('services.index')
+        ->with('success', 'Service updated successfully!');
+    }
+public function destroy(Service $service)
+    {
+    if ($service->appointments()->exists()) {
         return redirect()->route('services.index')
-            ->with('success', 'Service updated successfully!');
+            ->with('error', 'Service cannot be deleted because it has existing appointments!');
     }
 
-    public function destroy(Service $service)
-    {
-        $service->delete();
-        return redirect()->route('services.index')
-            ->with('success', 'Service deleted successfully!');
+    $service->delete();
+
+    return redirect()->route('services.index')
+        ->with('success', 'Service deleted successfully!');
     }
 }
